@@ -67,6 +67,7 @@ variable "enable_ipv6" {
   type        = bool
   default     = false
 
+}
 
 variable "public_subnet_enable_dns64" {
   description = "Indicates whether DNS queries made to the Amazon-provided DNS Resolver in this subnet should return synthetic IPv6 addresses for IPv4-only destinations. Default: `true`"
