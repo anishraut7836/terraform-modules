@@ -22,7 +22,7 @@ locals {
 }
 
 
-resource "aws_vpc" "firs_vpc" {
+resource "aws_vpc" "this" {
   count = local.create_vpc ? 1 : 0
 
   cidr_block          = var.use_ipam_pool ? null : var.cidr
@@ -55,7 +55,7 @@ resource "aws_subnet" "public" {
   cidr_block = var.public_subnet_ipv6_native ? null : element(concat(var.public_subnets, [""]), count.index)
   enable_dns64                                   = var.enable_ipv6 && var.public_subnet_enable_dns64
   map_public_ip_on_launch                        = var.map_public_ip_on_launch
-  vpc_id = aws_vpc.firs_vpc.id
+  vpc_id = aws_vpc.this.id
 
 
 }
@@ -64,5 +64,5 @@ resource "aws_subnet" "private" {
   availability_zone                              = length(regexall("^[a-z]{2}-", element(var.azs, count.index))) > 0 ? element(var.azs, count.index) : null
   availability_zone_id                           = length(regexall("^[a-z]{2}-", element(var.azs, count.index))) == 0 ? element(var.azs, count.index) : null
   cidr_block                                     = var.private_subnet_ipv6_native ? null : element(concat(var.private_subnets, [""]), count.index)
-  vpc_id = aws_vpc.firs_vpc.id
+  vpc_id = aws_vpc.this.id
 }
