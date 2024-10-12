@@ -48,8 +48,14 @@ resource "aws_vpc_ipv4_cidr_block_association" "this" {
   cidr_block = element(var.secondary_cidr_blocks, count.index)
 }
 
+#####Public Subnet
+
+locals {
+  create_public_subnets = local.create_vpc && local.len_public_subnets > 0
+}
 
 resource "aws_subnet" "public" {
+  count = local.create_public_subnets && (!var.one_nat_gateway_per_az || local.len_public_subnets >= length(var.azs)) ? local.len_public_subnets : 0
   availability_zone = length(regexall("^[a-z]{2}-", element(var.azs, count.index))) > 0 ? element(var.azs, count.index) : null
   availability_zone_id = length(regexall("^[a-z]{2}-", element(var.azs, count.index))) == 0 ? element(var.azs, count.index) : null
   cidr_block = var.public_subnet_ipv6_native ? null : element(concat(var.public_subnets, [""]), count.index)
@@ -60,7 +66,15 @@ resource "aws_subnet" "public" {
 
 }
 
+####Private Subnet
+
+locals {
+  create_private_subnets = local.create_vpc && local.len_private_subnets > 0
+}
+
+
 resource "aws_subnet" "private" {
+  count = local.create_private_subnets ? local.len_private_subnets : 0
   availability_zone                              = length(regexall("^[a-z]{2}-", element(var.azs, count.index))) > 0 ? element(var.azs, count.index) : null
   availability_zone_id                           = length(regexall("^[a-z]{2}-", element(var.azs, count.index))) == 0 ? element(var.azs, count.index) : null
   cidr_block                                     = var.private_subnet_ipv6_native ? null : element(concat(var.private_subnets, [""]), count.index)
