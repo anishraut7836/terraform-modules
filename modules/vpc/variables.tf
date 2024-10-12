@@ -136,3 +136,55 @@ variable "private_subnet_ipv6_native" {
   type        = bool
   default     = false
 }
+
+variable "private_subnet_suffix" {
+  description = "Suffix to append to private subnets name"
+  type        = string
+  default     = "private"
+}
+
+
+variable "private_subnet_tags_per_az" {
+  description = "Additional tags for the private subnets where the primary key is the AZ"
+  type        = map(map(string))
+  default     = {}
+}
+
+variable "private_subnet_tags" {
+  description = "Additional tags for the private subnets"
+  type        = map(string)
+  default     = {}
+}
+
+
+variable "private_subnet_names" {
+  description = "Explicit values to use in the Name tag on private subnets. If empty, Name tags are generated"
+  type        = list(string)
+  default     = []
+}
+
+
+
+variable "public_subnet_names" {
+  description = "Explicit values to use in the Name tag on public subnets. If empty, Name tags are generated"
+  type        = list(string)
+  default     = []
+}
+
+variable "public_subnet_suffix" {
+  description = "Suffix to append to public subnets name"
+  type        = string
+  default     = "public"
+}
+
+variable "public_subnet_tags" {
+  description = "Additional tags for the public subnets"
+  type        = map(string)
+  default     = {}
+}
+
+variable "public_subnet_tags_per_az" {
+  description = "Additional tags for the public subnets where the primary key is the AZ"
+  type        = map(map(string))
+  default     = {}
+}

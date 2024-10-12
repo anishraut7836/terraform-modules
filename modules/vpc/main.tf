@@ -63,6 +63,17 @@ resource "aws_subnet" "public" {
   map_public_ip_on_launch                        = var.map_public_ip_on_launch
   vpc_id = local.vpc_id
 
+  tags = merge(
+    {
+      Name = try(
+        var.public_subnet_names[count.index],
+        format("${var.name}-${var.public_subnet_suffix}-%s", element(var.azs, count.index))
+      )
+    },
+    var.tags,
+    var.public_subnet_tags,
+    lookup(var.public_subnet_tags_per_az, element(var.azs, count.index), {})
+  )
 
 }
 
@@ -79,4 +90,16 @@ resource "aws_subnet" "private" {
   availability_zone_id                           = length(regexall("^[a-z]{2}-", element(var.azs, count.index))) == 0 ? element(var.azs, count.index) : null
   cidr_block                                     = var.private_subnet_ipv6_native ? null : element(concat(var.private_subnets, [""]), count.index)
   vpc_id = local.vpc_id
+
+    tags = merge(
+    {
+      Name = try(
+        var.private_subnet_names[count.index],
+        format("${var.name}-${var.private_subnet_suffix}-%s", element(var.azs, count.index))
+      )
+    },
+    var.tags,
+    var.private_subnet_tags,
+    lookup(var.private_subnet_tags_per_az, element(var.azs, count.index), {})
+  )
 }
